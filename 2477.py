@@ -1,17 +1,4 @@
 import sys
-from enum import Enum
-
-# class Direction(Enum):
-#     east = 1
-#     west = 2
-#     south = 3
-#     north = 4
-    
-# class Edge:
-#     def __init__(self, dir, length, inner = False):
-#         self.dir = dir
-#         self.length = length
-#         self.inner = inner
 
 input = sys.stdin.readline
 number_of_chame = int(input())
@@ -59,14 +46,3 @@ small_area = edges[inner_index1][1] *  edges[inner_index2][1]
 big_area = big_length[0] * big_length[1]
 
 print((big_area - small_area) * number_of_chame)
-
-
-
-
-
-        
-    
-    
-
-
-    

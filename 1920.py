@@ -1,27 +1,24 @@
-import sys
-input = sys.stdin.readline
-N = int(input())
-A = list(map(int, input().split()))
-A.sort()
-M = int(input())
-check_list = list(map(int, input().split()))
+from itertools import combinations
 
+L, C = map(int, input().split())
 
+alphabets = input().split()
+alphabets.sort()
 
-def check(i, s_ind, e_ind):
+moum = ('a', 'e', 'i', 'o', 'u')
 
-    mid = (s_ind + e_ind) // 2
-    if i == A[mid]:
-        return 1
+def check_moum(arr):
+    count = 0
+    for i in arr:
+        if i in moum:
+            count += 1
+    return count
     
-    if s_ind > e_ind:
-        return 0
-    
-    if i < A[mid]:
-        return check(i, s_ind, mid - 1)
-    else:
-        return check(i, mid + 1, e_ind)
 
 
-for i in check_list:
-    print(check(i, 0, len(A) - 1))
+for col in combinations(alphabets,  L):
+    moum_count = check_moum(col)
+    jaum_count = L - moum_count
+    if moum_count > 0 and jaum_count > 1:
+        s = "".join(col)
+        print(s)

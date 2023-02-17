@@ -29,6 +29,7 @@ def compute_mirror_dir(x, y):
 
 
 start, end = None, None
+
 for i in range(N):
     for j in range(N):
         if house[i][j] == '#':
@@ -37,11 +38,23 @@ for i in range(N):
             else:
                 end = [i, j]
                 
-                
+
+def get_direction_index(u):
+    x, y = u
+    if x == 1 and y == 0:
+        return 0
+    if x == -1 and y == 0:
+        return 1
+    if x == 0 and y == 1:
+        return 2
+    if x == 0 and y == -1:
+        return 3
+
+INF = 1e9
                 
 def dijistra(start, end):
     heap = []
-    visited = [[[] for _ in range(N)] for _ in range(N)]
+    visited = [[[INF for _ in range(4)] for _ in range(N)] for _ in range(N)]
     
     
     for x,y, _x, _y in yield_available(start):
@@ -49,21 +62,26 @@ def dijistra(start, end):
             continue
         elif house[x][y] == '.' or house[x][y] == '#':
             heapq.heappush(heap,[0, x, y, _x, _y])
-            visited[x][y].append((_x, _y))
+            ind = get_direction_index((_x, _y))
+            visited[x][y][ind] = 0
+
 
         else:
             heapq.heappush(heap,[0, x, y, _x, _y])
-            visited[x][y].append((_x, _y))
+            ind = get_direction_index((_x, _y))
+            visited[x][y][ind] = 0
             
             for new_dx, new_dy in compute_mirror_dir(_x, _y):
-                heapq.heappush(heap,[1, x, y, new_dx,new_dy])
-                visited[x][y].append((new_dx, new_dy))
+                ind = get_direction_index((new_dx, new_dy))
+                if visited[x][y][ind] > 1:
+                    visited[x][y][ind] = 1
+                    heapq.heappush(heap,[1, x, y, new_dx,new_dy])
             
     while heap:
         dist, x, y, _x, _y = heapq.heappop(heap)
-        
-        # if x == end[0] and y == end[1]:
-        #     return dist
+
+        if x == end[0] and y == end[1]:
+            return dist
         
         new_x, new_y = x +_x, y + _y
         if not check_bound([new_x, new_y]):
@@ -72,19 +90,25 @@ def dijistra(start, end):
         val = house[new_x][new_y]
         if val == '*':
             continue
-        elif val == '#':
-            return dist
-        elif val == '.' and (_x, _y) not in visited[new_x][new_y]:
-            heapq.heappush(heap, [dist, new_x, new_y, _x, _y])
-            visited[new_x][new_y].append((_x, _y))
+
+        elif (val == '.' or val == '#'):
+            ind = get_direction_index((_x, _y))
+            if visited[new_x][new_y][ind] > dist:
+                heapq.heappush(heap, [dist, new_x, new_y, _x, _y])
+                visited[new_x][new_y][ind] = dist
         elif val == '!':
-            if (_x, _y) not in visited[new_x][new_y]:
-                heapq.heappush(heap,[dist, new_x, new_y, _x, _y])
-                visited[new_x][new_y].append((_x, _y))
+            ind = get_direction_index((_x, _y))
+            if visited[new_x][new_y][ind] > dist:
+                heapq.heappush(heap, [dist, new_x, new_y, _x, _y])
+                visited[new_x][new_y][ind] = dist
+                
             for new_dx, new_dy in compute_mirror_dir(_x, _y):
-                if (new_dx, new_dy) not in visited[new_x][new_y]:
-                    heapq.heappush(heap,[dist + 1, new_x, new_y, new_dx,new_dy])
-                    visited[new_x][new_y].append((new_dx, new_dy))
+                ind = get_direction_index((new_dx, new_dy))
+                if visited[new_x][new_y][ind] > dist + 1:
+                    heapq.heappush(heap, [dist + 1, new_x, new_y, new_dx, new_dy])
+                    visited[new_x][new_y][ind] = dist + 1
+                    
+    raise NameError("aa")
                 
 answer = dijistra(start, end)
 print(answer)

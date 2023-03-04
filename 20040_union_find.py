@@ -1,12 +1,17 @@
 n, m =map(int, input().split())
 parent = [-1 for _ in range(n)]
 
+
+
 def find(x):
     if parent[x] < 0:
         return x
     y = find(parent[x])
     parent[x] = y
     return y
+
+
+
 
 def union(x, y):
     r_x = find(x)
